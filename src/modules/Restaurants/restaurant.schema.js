@@ -8,6 +8,11 @@ const restaurantSchema = z.object({
   rating: z.number().min(1).max(10),
 });
 
+const reviewSchema = z.object({
+  comment: z.string().min(3),
+  rating: z.number().min(1).max(10),
+});
+
 export const validateRestaurant = (data) => {
   const result = restaurantSchema.safeParse(data);
 
@@ -21,5 +26,20 @@ export const validateRestaurant = (data) => {
     hasError,
     errorMessages,
     restaurantData,
+  };
+};
+export const validateReview = (data) => {
+  const result = reviewSchema.safeParse(data);
+
+  const {
+    hasError,
+    errorMessages,
+    data: reviewData,
+  } = extractValidationData(result);
+
+  return {
+    hasError,
+    errorMessages,
+    reviewData,
   };
 };

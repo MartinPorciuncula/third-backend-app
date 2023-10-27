@@ -1,47 +1,78 @@
-import { catchAsync } from "../../errors/index.js"
-import {validateRestaurant} from "./restaurant.schema.js"
-import {  RestaurantService } from "./restaurant_service.js"
+import { catchAsync } from '../../errors/index.js';
+import { ReviewService } from '../Reviews/review_service.js';
+import { validateRestaurant, validateReview } from './restaurant.schema.js';
+import { RestaurantService } from './restaurant_service.js';
 
-const restaurantService = new RestaurantService()
+const restaurantService = new RestaurantService();
+const reviewService = new ReviewService();
 
-export const findAllRestaurants = catchAsync(async(req,res,next) => {
+export const findAllRestaurants = catchAsync(async (req, res, next) => {
+  const restaurants = await restaurantService.findAllRestaurants();
 
-    const restaurants = await restaurantService.findAllRestaurants()
+  return res.status(200).json(restaurants);
+});
+export const CreateRestaurant = catchAsync(async (req, res, next) => {
+  const { hasError, errorMessages, restaurantData } = validateRestaurant(
+    req.body
+  );
 
-    return res.status(200).json(restaurants)
-})
-export const CreateRestaurant = catchAsync(async(req,res,next) => {
+  if (hasError) {
+    return res.status(422).json({
+      status: 'error',
+      message: errorMessages,
+    });
+  }
 
-    const { hasError, errorMessages, restaurantData } = validateRestaurant(req.body);
+  const restaurant = await restaurantService.createRestaurant(restaurantData);
 
-    if (hasError) {
-        return res.status(422).json({
-          status: 'error',
-          message: errorMessages,
-        });
-      }
+  return res.status(201).json(restaurant);
+});
+export const findOneRestaurant = catchAsync(async (req, res, next) => {
 
-const restaurant = await restaurantService.createRestaurant(restaurantData)
+});
+export const updateRestaurant = catchAsync(async (req, res, next) => {
 
-return res.status(201).json(restaurant)
+});
+export const deleteRestaurant = catchAsync(async (req, res, next) => {
 
-})
-export const findOneRestaurant = catchAsync(async(req,res,next) => {
+});
 
-})
-export const updateRestaurant = catchAsync(async(req,res,next) => {
+export const updateReview = catchAsync(async (req, res, next) => {
+  const { hasError, errorMessages, reviewData } = validateReview(req.body);
+  if (hasError) {
+    return res.status(422).json({
+      status: 'error',
+      message: errorMessages,
+    });
+  }
+  const { comment, rating } = req.body;
+  const { review } = req;
 
-})
-export const deleteRestaurant = catchAsync(async(req,res,next) => {
+  const reviewUpdated = await reviewService.updateReview(review, {comment,rating});
 
-})
-export const updateReview = catchAsync(async(req,res,next) => {
+  return res.status(201).json(reviewUpdated)
+});
 
-})
-export const deleteReview = catchAsync(async(req,res,next) => {
+export const deleteReview = catchAsync(async (req, res, next) => {});
 
-})
+export const createReviewToRestaurant = catchAsync(async (req, res, next) => {
+  const { hasError, errorMessages, reviewData } = validateReview(req.body);
 
-export const createReviewToRestaurant = catchAsync(async(req,res,next) =>{
-    
-})
+  if (hasError) {
+    return res.status(422).json({
+      status: 'error',
+      message: errorMessages,
+    });
+  }
+  const { comment, rating } = req.body;
+  const { id } = req.params;
+  const { sessionUser } = req;
+  const review = await reviewService.createReview({
+    comment,
+    rating,
+    restaurantId: id,
+    userId: sessionUser.id,
+  });
+
+  return res.status(201).json(review);
+});

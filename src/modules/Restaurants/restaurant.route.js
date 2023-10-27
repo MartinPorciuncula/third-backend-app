@@ -12,6 +12,9 @@ import {
     updateReview,
     deleteReview,
 } from "./restaurants.controller.js"
+import {validExistRestaurant} from "./restaurant.middleware.js"
+import {validExistReview}from "../Reviews/review.middleware.js"
+import {protectAccountOwner} from "../Users/users.middleware.js"
 
 router.route('/')
       .get(findAllRestaurants)
@@ -22,8 +25,8 @@ router.route('/:id')
       .patch(updateRestaurant)
       .delete(deleteRestaurant)
 
-      router.post("/reviews/:id",createReviewToRestaurant)
+      router.post("/reviews/:id",validExistRestaurant,createReviewToRestaurant)
 
-      router.route("/reviews/:restaurantId/:id", updateReview)
-      .patch(updateReview)
+      router.route("/reviews/:restaurantId/:id")
+      .patch(validExistRestaurant,validExistReview,protectAccountOwner,updateReview)
       .delete(deleteReview)

@@ -1,37 +1,34 @@
-import  Restaurant from "./restaurant.model.js"
+import Restaurant from './restaurant.model.js';
 
-export class RestaurantService{
-    
+export class RestaurantService {
+  async findAllRestaurants() {
+    return await Restaurant.findAll({
+      where: {
+        status: true,
+      },
+    });
+  }
 
-    async findAllRestaurants(){
- return await Restaurant.findAll({
-    where:{
-        status:true
-    }
- })
-    }
+  async createRestaurant(data) {
+    return await Restaurant.create(data);
+  }
 
-async createRestaurant(data){
-    return await Restaurant.create(data)
-}
-
-async findOneRestaurant(id){
+  async findOneRestaurant(id, restaurantId) {
     return await Restaurant.findOne({
-        where:{
-            status:true,
-            id,
-        }
-    })
-}
+      where: {
+        status: true,
+        id: restaurantId || id
+      },
+    });
+  }
 
-async updateRestaurant(restaurant,data){
-    return await restaurant.update(data)
-}
+  async updateRestaurant(restaurant, data) {
+    return await restaurant.update(data);
+  }
 
-async deleteRestaurant(restaurant){
+  async deleteRestaurant(restaurant) {
     return await restaurant.update({
-   status:false
-    })
-}
-
+      status: false,
+    });
+  }
 }
