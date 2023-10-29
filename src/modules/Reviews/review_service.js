@@ -6,23 +6,29 @@ export class ReviewService {
     return Review.findOne({
       where: {
         id,
-      status: 'active',
+        status: 'active',
       },
       include: [
         {
           model: User,
-          attributes: ["name", "email"],
+          attributes: ["id", "name", "email"]
         },
       ],
     });
   }
 
-  async createReview(data){
+  async createReview(data) {
     return Review.create(data)
   }
 
-  async updateReview(review,data){
+  async updateReview(review, data) {
     return review.update(data)
+  }
+
+  async deleteReview(review) {
+    return review.update({
+      status: 'deleted'
+    })
   }
 
 }

@@ -77,13 +77,7 @@ export const updateUser = catchAsync(async (req, res, next) => {
     });
   }
 
-  const {id} = req.params
-
-  const user = await userService.findOneById(id)
-
-  if (!user) {
-    return next(new AppError('This user does not exist', 404));
-  }
+ const {user} = req;
 
   const updatedUser = await userService.updateUser(user, req.body);
 

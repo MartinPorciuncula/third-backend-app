@@ -7,7 +7,7 @@ export const validExistRestaurant = catchAsync(async(req,res,next) => {
 
     const {id,restaurantId} = req.params;
 
-    const restaurant = restaurantService.findOneRestaurant(id,restaurantId)
+    const restaurant = await restaurantService.findOneRestaurant(id,restaurantId)
 
     if(!restaurant){
         next(new AppError("This restaurant does not exist",404))

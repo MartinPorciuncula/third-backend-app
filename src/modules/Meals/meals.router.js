@@ -1,23 +1,28 @@
 import express from 'express';
 
-export const router = express.Router();
-
-router.route('/').get(findAllMeals);
-
 import {
   findAllMeals,
   findOneMeals,
   updateMeals,
   deleteMeals,
   createMeals,
-  } from "./meals.controller.js"
-  
-router
-  .route('/:id')
+} from "./meals.controller.js"
 
-  .get(findOneMeals)
-  .patch(updateMeals)
-  .delete(deleteMeals)
+import { validExistRestaurant } from '../Restaurants/restaurant.middleware.js'
+import { protect, restrictTo } from '../Users/users.middleware.js';
 
-  .post(createMeals);
-  
+export const router = express.Router();
+
+router.route('/').get(findAllMeals)
+
+router.route("/:id")
+.get(findOneMeals)
+
+router.use(protect)
+
+router.route('/:id').post(validExistRestaurant,restrictTo("admin"), createMeals)
+
+router.route('/:id')
+  .patch(restrictTo("admin"),updateMeals)
+  .delete(restrictTo("admin"),deleteMeals)
+
